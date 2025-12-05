@@ -1,0 +1,219 @@
+package javaapplication1;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+public class Password_checker_and_generator
+{
+    static final String RESET = "\u001B[0m";
+    static final String BLUE = "\u001B[36m";    
+    static final String RED = "\u001B[31m";     
+    static final String YELLOW = "\u001B[33m";  
+    static final String GREEN = "\u001B[32m";  
+    static final String PURPLE = "\u001B[35m";
+
+
+    public static void main(String[] args)
+    {
+        
+        // العنوان
+        System.out.println(BLUE + "");
+        System.out.println(BLUE +"**************************************************************");
+        System.out.println(BLUE +"*                                                            *");
+        System.out.println(BLUE +"*                                                            *");
+        System.out.println(BLUE +"*  Welcome to our \" Password Checker And Generator Program \" *");
+        System.out.println(BLUE +"*                                                            *");
+        System.out.println(BLUE +"*                                                            *");
+        System.out.println(BLUE +"**************************************************************");
+
+        System.out.println(BLUE +"" + RESET);
+        System.out.println("");
+        
+         boolean running = true;
+    while (running)
+    { 
+        // القائمة
+
+            System.out.println(YELLOW + " 1- Check your password strength ");
+            System.out.println(YELLOW +" 2- Generate new password");
+            System.out.println(" 3- Exit" + RESET);
+            System.out.print(RED + "Enter your choice : " + RESET);
+
+        Scanner userInput = new Scanner(System.in);
+        int userChoice = userInput.nextInt();
+        System.out.println("");
+
+        // التحقق من صحة الإدخال
+        while (!(userChoice == 1 || userChoice == 2 || userChoice == 3)) {
+            System.out.println(RED + "Sorry! It is invalid input, try again :" + RESET);
+            System.out.println("");
+
+            System.out.println(YELLOW + " 1- Check your password strength ");
+            System.out.println(YELLOW +" 2- Generate new password");
+            System.out.println(" 3- Exit" + RESET);
+
+            System.out.print("Enter your choice : ");
+            userChoice = userInput.nextInt();
+        }
+
+        boolean t = true;
+
+        // الخيار الأول: فحص كلمة السر
+        if (userChoice == 1) {
+            while (t) {
+                System.out.print(BLUE+"Enter the password you want to check: "+ RESET);
+                userInput.nextLine();
+                String passwordToBeChecked = userInput.nextLine();
+
+                int lowerCount = countLowerCase(passwordToBeChecked);
+                int upperCount = countUpperCase(passwordToBeChecked);
+                int numberCount = countNumbers(passwordToBeChecked);
+                int symbolCount = countSymbols(passwordToBeChecked);
+                int lengthScore = passwordLength(passwordToBeChecked);
+
+                int score = calculateScore(lengthScore, lowerCount, upperCount, numberCount, symbolCount);
+
+                String strengthLevel = getStrengthLevel(score);
+
+                System.out.println(GREEN + "Password Strength: " + strengthLevel);
+                System.out.println("Score: " + score + "/10" + RESET);
+
+                System.out.println(PURPLE+"Do you want to check another password?");
+                System.out.println(PURPLE+"1- YES\n2- NO"+ RESET);
+
+                int doYouWantToContinue = userInput.nextInt();
+
+                if (doYouWantToContinue != 1)
+                    t = false;
+            }
+        }
+
+        // الخيار الثاني: توليد كلمة سر
+        if (userChoice == 2) {
+            System.out.print(BLUE +"Enter your password length: "+ RESET);
+            int length = userInput.nextInt();
+
+            while (length < 8) {
+                System.out.println(RED + "Length must be >= 8" + RESET);
+                System.out.print(BLUE +"Enter your password length: "+ RESET);
+                length = userInput.nextInt();
+            }
+
+            System.out.print(PURPLE+"Your generated password is: " + RESET);
+            String password = generatePassword(length);
+            System.out.println(GREEN + password + RESET);
+        }
+
+       // الخروج
+        if (userChoice == 3) {
+            System.out.println(GREEN + "You have exited the program successfully" + RESET);
+            running = false; // يخرج من اللوب
+        }
+    }
+    }
+    
+    // طول كلمة السر
+     public static int passwordLength(String password) {
+        int length = password.length();
+        if (length >= 12) return 2;
+        else if (length >= 8) return 1;
+        else return 0;
+    }
+
+    public static int countLowerCase(String password) {
+        int count = 0;
+        for (int i = 0; i < password.length(); i++) {
+            if (password.charAt(i) >= 'a' && password.charAt(i) <= 'z')
+                count++;
+        }
+        return count;
+    }
+
+    public static int countUpperCase(String password) {
+        int count = 0;
+        for (int i = 0; i < password.length(); i++) {
+            if (password.charAt(i) >= 'A' && password.charAt(i) <= 'Z')
+                count++;
+        }
+        return count;
+    }
+
+    public static int countSymbols(String password) {
+        int count = 0;
+        for (int i = 0; i < password.length(); i++) {
+            char c = password.charAt(i);
+            if (!Character.isLetterOrDigit(c))
+                count++;
+        }
+        return count;
+    }
+
+    public static int countNumbers(String password) {
+        int count = 0;
+        for (int i = 0; i < password.length(); i++) {
+            if (password.charAt(i) >= '0' && password.charAt(i) <= '9')
+                count++;
+        }
+        return count;
+    }
+
+    public static int calculateScore(int lengthScore, int lower, int upper, int digits, int symbols) {
+        int score = 0;
+
+        score += lengthScore;
+        if (lower > 0) score += 2;
+        if (upper > 0) score += 2;
+        if (digits > 0) score += 2;
+        if (symbols > 0) score += 2;
+
+        return Math.min(score, 10);
+    }
+
+    public static String getStrengthLevel(int score) {
+        if (score >= 9) return "Very Strong";
+        else if (score >= 6) return "Medium";
+        else if (score >= 3) return "Weak";
+        else return "Very Weak";
+    }
+
+    public static String generatePassword(int length) {
+
+        String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lower = "abcdefghijklmnopqrstuvwxyz";
+        String nums = "0123456789";
+        String symbol = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+
+        String all = upper + lower + nums + symbol;
+
+        Random r = new Random();
+
+        String password = "";
+
+        // نضمن 1 من كل نوع
+        password += upper.charAt(r.nextInt(upper.length()));
+        password += lower.charAt(r.nextInt(lower.length()));
+        password += nums.charAt(r.nextInt(nums.length()));
+        password += symbol.charAt(r.nextInt(symbol.length()));
+
+        for (int i = 4; i < length; i++)
+            password += all.charAt(r.nextInt(all.length()));
+
+        // Shuffle
+        List<Character> characters = new ArrayList<>();
+        for (char c : password.toCharArray())
+            characters.add(c);
+
+        Collections.shuffle(characters);
+
+        StringBuilder shuffledPassword = new StringBuilder();
+        for (char c : characters)
+            shuffledPassword.append(c);
+
+        return shuffledPassword.toString();
+        
+        
+    }
+   
+
+}
